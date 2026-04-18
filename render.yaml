@@ -1,0 +1,25 @@
+services:
+  - type: worker          # Background Worker = processus permanent (parfait pour un bot Telegram en polling)
+    name: telegram-bot
+    runtime: python
+    plan: free            # Plan gratuit Render
+    region: frankfurt     # Région Europe (latence réduite)
+ 
+    # Commande exécutée une seule fois avant le démarrage (installe les dépendances)
+    buildCommand: pip install -r requirements.txt
+ 
+    # Commande de démarrage du bot
+    startCommand: python telegram_bot.py
+ 
+    # Disque persistant pour que la base SQLite survive aux redémarrages
+    disk:
+      name: boutique-db
+      mountPath: /data      # Chemin où sera stocké le fichier boutique.db
+      sizeGB: 1             # 1 Go gratuit
+ 
+    # Variables d'environnement (TOKEN gardé secret, jamais dans le code)
+    envVars:
+      - key: TOKEN
+        sync: false         # Valeur à saisir manuellement dans le dashboard Render (sécurisé)
+      - key: PYTHON_VERSION
+        value: 3.11.0
