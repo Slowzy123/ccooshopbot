@@ -24,18 +24,25 @@ from telebot import types
 from datetime import datetime
 
 # ══════════════════════════════════════════════════════════════════
-# ██  CONFIGURATION GLOBALE
+# ██  CONFIGURATION GLOBALE – VARIABLES D'ENVIRONNEMENT
 # ══════════════════════════════════════════════════════════════════
 
-# Token fourni par @BotFather sur Telegram
-TOKEN = "VOTRE_TOKEN_ICI"
+# Token Telegram chargé depuis la variable d'environnement TOKEN
+# → À définir dans le dashboard Render (jamais dans le code !)
+TOKEN = os.environ.get("TOKEN")
+if not TOKEN:
+    raise ValueError("❌ Variable d'environnement TOKEN manquante !")
 
-# Liste des identifiants Telegram autorisés en tant qu'administrateurs
-# Obtenez votre ID via le bot @userinfobot
-ADMIN_IDS = [123456789, 987654321]
+# Identifiants admins chargés depuis ADMIN_IDS (ex: "123456789,987654321")
+# → À définir dans le dashboard Render, séparés par des virgules
+_raw_admins = os.environ.get("ADMIN_IDS", "")
+ADMIN_IDS = [int(i.strip()) for i in _raw_admins.split(",") if i.strip().isdigit()]
+if not ADMIN_IDS:
+    raise ValueError("❌ Variable d'environnement ADMIN_IDS manquante ou invalide !")
 
-# Nom du fichier de base de données SQLite
-DB_NAME = "boutique.db"
+# Base de données stockée sur le disque persistant Render (/data)
+# En local, elle sera créée dans le dossier courant
+DB_NAME = os.environ.get("DB_PATH", "/data/boutique.db")
 
 # Devise utilisée dans le bot
 DEVISE = "€"
